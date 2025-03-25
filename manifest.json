@@ -1,0 +1,21 @@
+{
+    "name": "Chronos",
+    "short_name": "Chronos",
+    "description": "Modern screen time tracking for Linux",
+    "start_url": "http://localhost:4567/screen_time_viewer.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#0d6efd",
+    "icons": [
+        {
+            "src": "static/icons/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "static/icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+} 

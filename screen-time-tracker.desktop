@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Screen Time Tracker
+Exec=/bin/bash -c "cd /home/harshil.zadafiya@brainvire.com/Desktop/Workspace/flight-deck/screentime-tracker && source venv/bin/activate && python3 screen_time_tracker.py"
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Terminal=false
+StartupNotify=false
+Environment=DISPLAY=:0
+X-GNOME-Autostart-Delay=10 

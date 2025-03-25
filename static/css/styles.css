@@ -1,0 +1,56 @@
+.time-slot {
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+}
+
+.current-session {
+    background-color: #e3f2fd;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.current-session.active {
+    background-color: #d4edda;
+}
+
+.event-badge {
+    margin-right: 5px;
+}
+
+.event-badge.startup { background-color: #28a745; }
+.event-badge.shutdown { background-color: #dc3545; }
+.event-badge.lock { background-color: #ffc107; }
+.event-badge.unlock { background-color: #17a2b8; }
+.event-badge.logout { background-color: #6c757d; }
+.event-badge.system_shutdown { background-color: #dc3545; }
+
+.session-time {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #198754;
+}
+
+.total-time {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #0d6efd;
+}
+
+.time-display {
+    font-family: monospace;
+    font-size: 1.8em;
+    font-weight: bold;
+}
+
+.active-session {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+} 
