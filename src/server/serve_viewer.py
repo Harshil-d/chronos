@@ -43,7 +43,11 @@ class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
         elif path.startswith('static/'):
             return str(base_dir / path)
         elif path.startswith('data/'):
-            return str(base_dir / path)
+            full_path = base_dir / path
+            logging.info(f"Serving data file: {full_path}")
+            if not full_path.exists():
+                logging.error(f"Data file not found: {full_path}")
+            return str(full_path)
         elif path == 'manifest.json':
             return str(base_dir / path)
         elif path == 'sw.js':
@@ -51,17 +55,23 @@ class CORSRequestHandler(http.server.SimpleHTTPRequestHandler):
         elif path == 'screen_time_viewer.html':
             return str(base_dir / path)
         
-        return super().translate_path(path)
+        # For any other path, serve the main HTML file
+        return str(base_dir / 'screen_time_viewer.html')
 
 def main():
     PORT = 4567
     try:
         # Change to the project root directory
-        os.chdir(Path(__file__).parent.parent.parent)
+        root_dir = Path(__file__).parent.parent.parent
+        os.chdir(root_dir)
+        
+        # Log the current working directory and data directory
+        logging.info(f"Server root directory: {root_dir}")
+        logging.info(f"Data directory: {root_dir / 'data' / 'screen_time_data'}")
         
         with socketserver.TCPServer(("", PORT), CORSRequestHandler) as httpd:
             logging.info(f"Starting server on port {PORT}")
-            logging.info(f"View the screen time tracker at http://localhost:{PORT}/screen_time_viewer.html")
+            logging.info(f"View the screen time tracker at http://localhost:{PORT}/")
             httpd.serve_forever()
     except Exception as e:
         logging.error(f"Error starting server: {e}")

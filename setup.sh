@@ -1,40 +1,35 @@
 #!/bin/bash
 
-# Get the directory of this script
+# Get the directory where the script is located
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Create necessary directories
 mkdir -p "$DIR/data/screen_time_data"
 mkdir -p "$DIR/logs"
+mkdir -p "$DIR/static/icons"
 
-# Set up Python virtual environment
-python3 -m venv venv
-source venv/bin/activate
+# Create virtual environment
+python3 -m venv "$DIR/venv"
+source "$DIR/venv/bin/activate"
 
-# Install required packages
-pip install -r requirements.txt
+# Install requirements
+pip install -r "$DIR/requirements.txt"
 
 # Make scripts executable
 chmod +x "$DIR/src/tracker/screen_time_tracker.py"
 chmod +x "$DIR/src/server/serve_viewer.py"
 chmod +x "$DIR/start_all.sh"
+chmod +x "$DIR/start_screen_tracker.sh"
 
-# Create autostart directory if it doesn't exist
-mkdir -p ~/.config/autostart
-
-# Create desktop entry for autostart
-cat > ~/.config/autostart/chronos.desktop << EOL
+# Create desktop entry
+cat > "$HOME/.config/autostart/chronos-screen-time-tracker.desktop" << EOL
 [Desktop Entry]
 Type=Application
-Name=Chronos
-Comment=Modern screen time tracking for Linux
-Exec=bash -c "cd ${DIR} && ./start_all.sh"
-Hidden=false
-NoDisplay=false
-X-GNOME-Autostart-enabled=true
-Icon=${DIR}/static/icons/icon-512x512.png
+Name=Chronos Screen Time Tracker
+Exec=/bin/bash -c "cd $DIR && source venv/bin/activate && python3 src/tracker/screen_time_tracker.py"
+Icon=$DIR/static/icons/icon-192x192.png
+Terminal=false
+Categories=Utility;
 EOL
 
-echo "Chronos setup completed successfully!"
-echo "The application will start automatically on next login."
-echo "To start it now, run: ./start_all.sh" 
+echo "Setup completed successfully!" 

@@ -76,18 +76,31 @@ function displayData(data) {
 
     // Display individual time slots
     const events = data.events;
-    for (let i = 1; i < events.length; i++) {
-        if (events[i-1].type === 'unlock' && events[i].type === 'lock') {
-            const duration = calculateTimeSlotDuration(events[i-1].timestamp, events[i].timestamp);
+    let currentSession = null;
+    let sessionCount = 1;
+    
+    for (let i = 0; i < events.length; i++) {
+        const event = events[i];
+        
+        if (event.type === 'unlock' || event.type === 'startup') {
+            currentSession = {
+                start: event.timestamp,
+                startIndex: i,
+                type: event.type
+            };
+        } else if ((event.type === 'lock' || event.type === 'system_shutdown' || event.type === 'logout') && currentSession) {
+            const duration = calculateTimeSlotDuration(currentSession.start, event.timestamp);
             const timeSlot = document.createElement('div');
             timeSlot.className = 'time-slot';
             timeSlot.innerHTML = `
-                <strong>Session ${i}:</strong><br>
-                Start: ${formatDateTime(events[i-1].timestamp)}<br>
-                End: ${formatDateTime(events[i].timestamp)}<br>
+                <strong>Session ${sessionCount}:</strong><br>
+                Start: ${formatDateTime(currentSession.start)}<br>
+                End: ${formatDateTime(event.timestamp)}<br>
                 Duration: ${formatTime(duration)}
             `;
             timeSlotsDiv.appendChild(timeSlot);
+            currentSession = null;
+            sessionCount++;
         }
     }
 

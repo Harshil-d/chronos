@@ -30,10 +30,12 @@ chronos/
 ├── logs/                  # Log files
 ├── docs/                  # Documentation
 │   └── README.md
-├── requirements.txt       # Python dependencies
-├── setup.sh              # Setup script
-├── start_all.sh          # Start script
-├── manifest.json         # PWA manifest
+├── chronos.service       # Systemd service file
+├── install_service.sh    # Service installation script
+├── requirements.txt      # Python dependencies
+├── setup.sh             # Setup script
+├── start_all.sh         # Start script
+├── manifest.json        # PWA manifest
 └── screen_time_viewer.html # Main HTML viewer
 ```
 
@@ -66,27 +68,45 @@ This will:
 - Create necessary directories
 - Set up a Python virtual environment
 - Install required packages
-- Configure autostart
-- Set proper permissions
+- Configure permissions
 
-## Usage
-
-### Starting Chronos
-
-Run the start script:
+3. Install the systemd service:
 ```bash
-./start_all.sh
+./install_service.sh
 ```
 
 This will:
-- Start the screen time tracker in the background
-- Launch the HTTP server on port 4567
+- Install Chronos as a user systemd service
+- Enable autostart on login
+- Start the service immediately
+
+## Usage
+
+### Service Management
+
+Control Chronos using systemd:
+```bash
+# Check service status
+systemctl --user status chronos.service
+
+# Start the service
+systemctl --user start chronos.service
+
+# Stop the service
+systemctl --user stop chronos.service
+
+# Restart the service
+systemctl --user restart chronos.service
+
+# View logs
+journalctl --user -u chronos.service -f
+```
 
 ### Viewing Your Screen Time
 
 Open your browser and navigate to:
 ```
-http://localhost:4567/screen_time_viewer.html
+http://localhost:4567/
 ```
 
 ### Data Location
@@ -95,47 +115,48 @@ http://localhost:4567/screen_time_viewer.html
 - Log files:
   - Tracker logs: `logs/screen_time_tracker.log`
   - Server logs: `logs/viewer_server.log`
+  - Startup logs: `logs/startup.log`
 
 ### Checking Status
 
 To check if Chronos is running:
 ```bash
-ps aux | grep screen_time_tracker.py
-```
-
-To check the server status:
-```bash
-ps aux | grep serve_viewer.py
+systemctl --user status chronos.service
 ```
 
 ### Viewing Logs
 
-To view tracker logs:
+To view all logs:
 ```bash
-tail -f logs/screen_time_tracker.log
-```
+# View service logs
+journalctl --user -u chronos.service -f
 
-To view server logs:
-```bash
+# View tracker logs
+tail -f logs/screen_time_tracker.log
+
+# View server logs
 tail -f logs/viewer_server.log
+
+# View startup logs
+tail -f logs/startup.log
 ```
 
 ## Troubleshooting
 
-1. If the tracker isn't starting:
-   - Check the logs in `logs/screen_time_tracker.log`
-   - Ensure you have proper permissions
-   - Verify the virtual environment is activated
+1. If the service isn't starting:
+   - Check the service status: `systemctl --user status chronos.service`
+   - View the logs: `journalctl --user -u chronos.service -f`
+   - Ensure proper permissions: `chmod +x start_all.sh src/tracker/screen_time_tracker.py src/server/serve_viewer.py`
 
 2. If the viewer isn't accessible:
-   - Check if the server is running
-   - Look at `logs/viewer_server.log`
-   - Ensure port 4567 is not in use
+   - Check if the server is running: `systemctl --user status chronos.service`
+   - Look at server logs: `tail -f logs/viewer_server.log`
+   - Ensure port 4567 is not in use: `lsof -i :4567`
 
 3. If data isn't updating:
    - Check file permissions in `data/screen_time_data/`
-   - Verify the tracker process is running
-   - Check for errors in the logs
+   - Verify the service is running: `systemctl --user status chronos.service`
+   - Check for errors in the logs: `journalctl --user -u chronos.service -f`
 
 ## Data Structure
 
@@ -171,4 +192,4 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 - Built with Python, modern web technologies, and ❤️
 
 ---
-Made with ⏱️ by [Your Name] 
+Made with ⏱️ by Harshil Zadafiya
