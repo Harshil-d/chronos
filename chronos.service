@@ -1,6 +1,7 @@
 [Unit]
 Description=Chronos Screen Time Tracker
 After=graphical-session.target
+Requires=graphical-session.target
 PartOf=graphical-session.target
 StartLimitIntervalSec=0
 
@@ -8,10 +9,12 @@ StartLimitIntervalSec=0
 Type=simple
 Environment=DISPLAY=:0
 Environment=XAUTHORITY=%h/.Xauthority
+Environment=PYTHONUNBUFFERED=1
+ExecStartPre=/bin/bash -c 'until xset q &>/dev/null; do sleep 1; done'
 ExecStart=/bin/bash -c 'cd %h/Desktop/Workspace/flight-deck/chronos && ./start_all.sh'
 WorkingDirectory=%h/Desktop/Workspace/flight-deck/chronos
-Restart=always
-RestartSec=60
+Restart=on-failure
+RestartSec=30
 KillMode=mixed
 TimeoutStopSec=30
 

@@ -334,6 +334,7 @@ def main():
         logging.info(f"Python version: {sys.version}")
         logging.info(f"Current user: {os.getenv('USER')}")
         logging.info(f"Display: {os.getenv('DISPLAY')}")
+        logging.info(f"Working directory: {os.getcwd()}")
         
         tracker = ScreenTimeTracker()
         
@@ -347,22 +348,43 @@ def main():
             last_event_time = datetime.fromisoformat(last_event["timestamp"])
             time_since_last = (current_time - last_event_time).total_seconds()
 
+            logging.info(f"Last event: {last_event['type']} at {last_event_time}")
+            logging.info(f"Time since last event: {time_since_last} seconds")
+
             # If last event was a startup and it was recent (within 5 minutes)
             if last_event["type"] == "startup" and time_since_last < 300:
+                logging.info("Skipping startup event - last startup was too recent")
                 should_log_startup = False
             # If last event was shutdown/logout, always allow new startup regardless of time
             elif last_event["type"] in ["system_shutdown", "logout"]:
+                logging.info("Last event was shutdown/logout - allowing new startup")
                 should_log_startup = True
+            else:
+                logging.info(f"Last event was {last_event['type']} - allowing new startup")
             
         if should_log_startup:
+            logging.info("Logging startup event")
             tracker.log_event("startup")
             tracker.current_session['is_active'] = True
             tracker.current_session['start_time'] = current_time.isoformat()
             tracker.save_data()
+            logging.info("Startup event logged successfully")
         
+        # Add a small delay after startup to ensure system is stable
+        time.sleep(5)
+        
+        # Verify the service is still running after startup
+        if not os.path.exists('/proc/self'):
+            logging.error("Service process no longer exists after startup")
+            return
+            
+        logging.info("Starting main tracking loop")
         tracker.run()
     except Exception as e:
         logging.error(f"Fatal error in main: {str(e)}")
+        logging.error(f"Error type: {type(e).__name__}")
+        import traceback
+        logging.error(f"Traceback: {traceback.format_exc()}")
         raise
 
 if __name__ == "__main__":
