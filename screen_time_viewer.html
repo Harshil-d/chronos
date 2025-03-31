@@ -9,30 +9,194 @@
     <link rel="stylesheet" href="/static/css/styles.css">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0d6efd">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .dashboard-card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-            transition: transform 0.2s;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
+        :root {
+            --primary-color: #8A6FF7;
+            --primary-light: #A594F9;
+            --primary-lighter: #CDC1FF;
+            --primary-lightest: #E5D9F2;
+            --bg-color: #F5EFFF;
+            --card-bg: #FFFFFF;
+            --text-primary: #4A3B8C;
+            --text-secondary: #6B5BA1;
         }
+
+        body {
+            background-color: var(--bg-color);
+        }
+
+        .navbar {
+            background-color: var(--primary-color) !important;
+            box-shadow: 0 2px 4px rgba(138, 111, 247, 0.3);
+            padding: 0.5rem 1rem;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white !important;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            background-color: var(--primary-light);
+            color: white !important;
+        }
+
+        .nav-link.active {
+            background-color: var(--primary-light);
+            color: white !important;
+        }
+
+        .dashboard-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(138, 111, 247, 0.15);
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid var(--primary-lighter);
+        }
+
         .dashboard-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(138, 111, 247, 0.2);
         }
-        .dashboard-card .card-title {
-            margin-bottom: 1rem;
+
+        .card-title {
+            color: var(--text-primary);
+            font-weight: 600;
         }
-        .dashboard-card .card-content {
-            flex-grow: 1;
+
+        .stat-card {
+            background: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: 1px solid var(--primary-lighter);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-color);
+            opacity: 0.7;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(138, 111, 247, 0.15);
+            background: var(--card-bg);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 0;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-icon {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            opacity: 0.8;
+        }
+
+        .stats-container {
+            height: 400px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
+            gap: 1rem;
         }
+
+        .stat-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        #analyticsGraph {
+            border: 1px solid var(--primary-lighter);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background: var(--card-bg);
+        }
+
+        #analyticsGraph:hover {
+            box-shadow: 0 4px 6px rgba(138, 111, 247, 0.15);
+        }
+
+        .input-group-text {
+            background-color: var(--bg-color) !important;
+            border-color: var(--primary-lighter);
+        }
+
+        .input-group .form-control {
+            border-color: var(--primary-lighter);
+            color: var(--text-primary);
+        }
+
+        .input-group .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(138, 111, 247, 0.25);
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 6px rgba(138, 111, 247, 0.15);
+        }
+
+        .dropdown-item {
+            color: var(--text-primary);
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+        }
+
+        .btn-light {
+            background-color: var(--bg-color);
+            border-color: var(--primary-lighter);
+            color: var(--text-primary);
+        }
+
+        .btn-light:hover {
+            background-color: var(--primary-lighter);
+            border-color: var(--primary-light);
+            color: var(--text-primary);
+        }
+
         .time-slot {
             margin: 10px 0;
             padding: 15px;
@@ -109,63 +273,613 @@
             50% { opacity: 0.7; }
             100% { opacity: 1; }
         }
+        /* New styles for analytics section */
+        .stats-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            transition: transform 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #0d6efd;
+        }
+        #analyticsGraph {
+            border: 1px solid #dee2e6;
+            transition: all 0.3s ease;
+        }
+        #analyticsGraph:hover {
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        /* View options dropdown */
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+            transition: background-color 0.2s;
+        }
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+        /* Date picker styling */
+        .input-group-text {
+            border-right: none;
+        }
+        .input-group .form-control {
+            border-left: none;
+        }
+        .input-group .form-control:focus {
+            border-color: #dee2e6;
+        }
+        .input-group:focus-within {
+            box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
+        }
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+            color: white;
+        }
+        .header-stat-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 1.2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            transition: all 0.2s;
+            min-width: 200px;
+            backdrop-filter: blur(5px);
+        }
+        .header-stat-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .header-stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .header-stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            margin-left: auto;
+        }
+        .header-stat-icon {
+            font-size: 1.3rem;
+            color: white;
+            opacity: 0.9;
+        }
+        .header-date-picker {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: 2rem;
+        }
+        .header-date-picker .input-group {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            min-width: 200px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+        .header-date-picker .input-group-text {
+            background: transparent !important;
+            border: none;
+            color: white;
+            padding: 0.8rem 1rem;
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+        .header-date-picker .form-control {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 0.8rem 1rem;
+            font-weight: 500;
+            height: 100%;
+        }
+        .header-date-picker .form-control:focus {
+            background: transparent;
+            box-shadow: none;
+        }
+        .header-date-picker .form-control::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            opacity: 0.7;
+        }
+        .timeline-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(138, 111, 247, 0.15);
+            height: auto;
+            min-height: 400px;
+            overflow-x: auto;
+        }
+
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 0;
+            position: relative;
+            min-width: 1200px;
+        }
+
+        .timeline-dates {
+            position: sticky;
+            left: 0;
+            background: var(--card-bg);
+            z-index: 2;
+            border-right: 2px solid var(--primary-lighter);
+        }
+
+        .timeline-date {
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--primary-lighter);
+            background: var(--card-bg);
+            font-size: 0.9rem;
+        }
+
+        .timeline-content {
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .timeline-hours {
+            display: grid;
+            grid-template-columns: repeat(17, 1fr);
+            position: sticky;
+            top: 0;
+            background: var(--card-bg);
+            z-index: 2;
+            padding: 10px 0;
+            border-bottom: 2px solid var(--primary-lighter);
+        }
+
+        .timeline-hour {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            padding: 0 5px;
+            position: relative;
+        }
+
+        .timeline-hour::after {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            height: 100%;
+            width: 1px;
+            background: var(--primary-lightest);
+            z-index: 1;
+        }
+
+        .timeline-lines {
+            position: relative;
+            z-index: 2;
+            min-height: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .timeline-date-group {
+            display: grid;
+            grid-template-rows: 25px 25px;
+            gap: 0;
+            height: 50px;
+            border-bottom: 1px solid var(--primary-lighter);
+            position: relative;
+        }
+
+        .timeline-line {
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .timeline-line-label {
+            position: absolute;
+            left: -60px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            width: 50px;
+            text-align: right;
+        }
+
+        .timeline-segment {
+            position: absolute;
+            height: 16px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            z-index: 3;
+        }
+
+        .timeline-segment:hover {
+            transform: scaleY(1.2);
+            box-shadow: 0 2px 4px rgba(138, 111, 247, 0.2);
+        }
+
+        .timeline-segment.work {
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 100%);
+        }
+
+        .timeline-segment.off {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--primary-lighter),
+                var(--primary-lighter) 4px,
+                var(--primary-lightest) 4px,
+                var(--primary-lightest) 8px
+            );
+        }
+
+        .timeline-tooltip {
+            position: absolute;
+            background: var(--card-bg);
+            padding: 8px 12px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(138, 111, 247, 0.2);
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            z-index: 10;
+            pointer-events: none;
+            white-space: nowrap;
+            transform: translateY(-100%);
+            top: -5px;
+        }
+
+        .events-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(138, 111, 247, 0.15);
+        }
+
+        .events-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-lighter);
+        }
+
+        .events-title {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            width: 100%;
+            margin: 0;
+        }
+
+        .event-date-card {
+            background: var(--bg-color);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--primary-lighter);
+            transition: all 0.2s;
+            height: fit-content;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .event-date-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(138, 111, 247, 0.1);
+            background: var(--card-bg);
+        }
+
+        .event-date-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px dashed var(--primary-lighter);
+            flex-shrink: 0;
+        }
+
+        .event-date {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .event-count {
+            background: var(--primary-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .event-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-grow: 1;
+            overflow-y: auto;
+            max-height: 500px;
+            padding-right: 8px;
+        }
+
+        .event-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .event-list::-webkit-scrollbar-track {
+            background: var(--bg-color);
+            border-radius: 3px;
+        }
+
+        .event-list::-webkit-scrollbar-thumb {
+            background: var(--primary-lighter);
+            border-radius: 3px;
+        }
+
+        .event-list::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-light);
+        }
+
+        .event-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            transition: all 0.2s;
+            border: 1px solid var(--primary-lighter);
+        }
+
+        .event-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 2px 4px rgba(138, 111, 247, 0.1);
+        }
+
+        .event-time {
+            width: 80px;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .event-icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            margin-right: 12px;
+            font-size: 1rem;
+        }
+
+        .event-type {
+            flex-grow: 1;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: capitalize;
+            font-size: 0.9rem;
+        }
+
+        .event-type span {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(138, 111, 247, 0.1);
+            color: var(--primary-color);
+        }
+
+        /* Add styles for current session */
+        .timeline-segment.current {
+            background: linear-gradient(90deg, var(--primary-color) 0%, #4CAF50 100%);
+            animation: pulse-timeline 2s infinite;
+        }
+
+        @keyframes pulse-timeline {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .stat-card.current-session {
+            border-left: 4px solid #4CAF50;
+        }
+
+        .stat-card.current-session .stat-value {
+            color: #4CAF50;
+            animation: pulse-stat 2s infinite;
+        }
+
+        @keyframes pulse-stat {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
     </style>
 </head>
 <body class="bg-light">
-    <div class="container-fluid py-4">
-        <div class="row mb-4">
-            <div class="col-12">
-                <h1 class="display-4 mb-2">Chronos</h1>
-                <p class="lead text-muted">Modern screen time tracking for Linux</p>
-            </div>
-        </div>
-        
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="dashboard-card">
-                    <h5 class="card-title">
-                        <i class="bi bi-calendar-date me-2"></i>Date Selection
-                    </h5>
-                    <div class="card-content">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <i class="bi bi-clock-history me-2"></i>
+                <span>Chronos</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="header-stats">
+                    <div class="header-stat-item">
+                        <i class="bi bi-clock header-stat-icon"></i>
+                        <div class="header-stat-label">Today's Total</div>
+                        <div class="header-stat-value" id="headerTotalDuration">00:00:00</div>
+                    </div>
+                    <div class="header-stat-item">
+                        <i class="bi bi-play-circle header-stat-icon"></i>
+                        <div class="header-stat-label">Current Session</div>
+                        <div class="header-stat-value" id="headerCurrentSession">00:00:00</div>
+                </div>
+                <div class="header-date-picker">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-calendar-date"></i>
+                        </span>
                         <input type="date" id="datePicker" class="form-control">
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="dashboard-card">
-                    <h5 class="card-title">
-                        <i class="bi bi-clock-history me-2"></i>Today's Working Hours
-                    </h5>
-                    <div class="card-content">
-                        <div id="totalTime" class="time-display total-time">00:00:00</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="dashboard-card">
-                    <h5 class="card-title">
-                        <i class="bi bi-activity me-2"></i>Current Session
-                    </h5>
-                    <div class="card-content">
-                        <div id="currentSession" class="current-session">
-                            <div class="session-status mb-2">Status: <span id="sessionStatus">Inactive</span></div>
-                            <div class="session-time time-display">Duration: <span id="currentSessionTime">00:00:00</span></div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
+    </nav>
 
+    <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
                 <div class="dashboard-card">
                     <h5 class="card-title mb-3">
-                        <i class="bi bi-graph-up me-2"></i>Events Timeline
+                        <i class="bi bi-graph-up me-2"></i>Analytics Overview
                     </h5>
-                    <div id="summaryStats" class="summary-stats mb-4">
-                        <!-- Summary stats will be inserted here -->
+                <div class="row">
+                    <div class="col-md-8">
+                        <!-- Graph will go here -->
+                        <div id="analyticsGraph" class="bg-white p-3 rounded" style="height: 420px; position: relative;">
+                            <div class="position-absolute top-0 end-0 p-3" style="z-index: 1;">
+                                <div class="input-group" style="width: 150px;">
+                                    <span class="input-group-text bg-white">
+                                        <i class="bi bi-calendar-range"></i>
+                                    </span>
+                                    <input type="number" id="daysInput" class="form-control" value="7" min="1" max="30">
                     </div>
-                    <div id="timeSlots"></div>
+        </div>
+                            <canvas id="durationChart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-4">
+                        <!-- Stats will go here -->
+                        <div class="stats-container">
+                            <div class="stat-card">
+                                <div class="stat-label">
+                                    <i class="bi bi-clock stat-icon"></i>
+                                    Total Duration
+            </div>
+                                <div class="stat-value" id="totalDuration">00:00:00</div>
+                    </div>
+                            <div class="stat-card">
+                                <div class="stat-label">
+                                    <i class="bi bi-briefcase stat-icon"></i>
+                                    Work Duration
+                </div>
+                                <div class="stat-value" id="workDuration">00:00:00</div>
+            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">
+                                    <i class="bi bi-moon stat-icon"></i>
+                                    Off Time Duration
+                                </div>
+                                <div class="stat-value" id="offTimeDuration">00:00:00</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-card">
+                                    <div class="stat-label">
+                                        <i class="bi bi-power stat-icon"></i>
+                                        Startups
+                                    </div>
+                                    <div class="stat-value" id="startupCount">0</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-label">
+                                        <i class="bi bi-calendar-check stat-icon"></i>
+                                        Sessions
+                                    </div>
+                                    <div class="stat-value" id="sessionCount">0</div>
+</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Timeline Section -->
+                <div class="timeline-container">
+                    <div class="timeline-header">
+                        <h5 class="timeline-title">
+                            <i class="bi bi-clock-history me-2"></i>Timeline View
+                    </h5>
+                        <div class="timeline-legend">
+                            <div class="timeline-legend-item">
+                                <div class="timeline-legend-color work"></div>
+                                <span></span>
+                        </div>
+                            <div class="timeline-legend-item">
+                                <div class="timeline-legend-color off"></div>
+                                <span></span>
+                    </div>
+                </div>
+            </div>
+                    <div class="timeline">
+                        <div class="timeline-divider"></div>
+                        <div id="timelineContent"></div>
+            </div>
+        </div>
+
+                <!-- All Events Section -->
+                <div class="events-container">
+                    <div class="events-header">
+                        <h5 class="events-title">
+                            <i class="bi bi-list-check me-2"></i>All Events
+                    </h5>
+                    </div>
+                    <div class="events-grid" id="eventsList"></div>
                 </div>
             </div>
         </div>
@@ -174,6 +888,7 @@
     <script>
         let currentSessionStart = null;
         let updateInterval = null;
+        let durationChart = null;
 
         function formatTime(seconds) {
             const hours = Math.floor(seconds / 3600);
@@ -197,40 +912,38 @@
             if (currentSessionStart) {
                 const now = new Date();
                 const duration = (now - currentSessionStart) / 1000;
-                document.getElementById('currentSessionTime').textContent = formatTime(duration);
+                document.getElementById('headerCurrentSession').textContent = formatTime(duration);
+            } else {
+                document.getElementById('headerCurrentSession').textContent = '00:00:00';
             }
         }
 
         function updateCurrentSession(data) {
-            const currentSession = data.current_session;
-            const sessionStatus = document.getElementById('sessionStatus');
-            const currentSessionTime = document.getElementById('currentSessionTime');
-            const currentSessionDiv = document.getElementById('currentSession');
-
-            if (currentSession.is_active && currentSession.start_time) {
-                sessionStatus.textContent = 'Active';
-                currentSessionDiv.classList.add('active');
-                currentSessionDiv.classList.remove('inactive');
-                currentSessionDiv.classList.add('active-session');
-
-                // Set the start time for the current session
-                currentSessionStart = new Date(currentSession.start_time);
+            if (data.current_session && data.current_session.start_time) {
+                const now = new Date();
+                const startTime = new Date(data.current_session.start_time);
                 
-                // Update the display immediately
+                // Only update if the session started today
+                if (startTime.toDateString() === now.toDateString()) {
+                    currentSessionStart = startTime;
                 updateCurrentSessionDisplay();
                 
-                // Start the update interval if not already running
                 if (!updateInterval) {
                     updateInterval = setInterval(updateCurrentSessionDisplay, 1000);
                 }
             } else {
-                sessionStatus.textContent = 'Inactive';
-                currentSessionDiv.classList.remove('active', 'active-session');
-                currentSessionDiv.classList.add('inactive');
-                currentSessionTime.textContent = '00:00:00';
                 currentSessionStart = null;
+                    document.getElementById('headerCurrentSession').textContent = '00:00:00';
+                    
+                    if (updateInterval) {
+                        clearInterval(updateInterval);
+                        updateInterval = null;
+                    }
+                }
+            } else {
+                currentSessionStart = null;
+                document.getElementById('headerCurrentSession').textContent = '00:00:00';
                 
-                // Clear the update interval
                 if (updateInterval) {
                     clearInterval(updateInterval);
                     updateInterval = null;
@@ -326,103 +1039,650 @@
             document.getElementById('totalTime').textContent = formatTime(duration);
         }
 
-        function displayData(data) {
-            // Update working hours display
-            updateWorkingHoursDisplay();
+        // Initialize the chart
+        function initializeChart() {
+            const ctx = document.getElementById('durationChart').getContext('2d');
+            durationChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Work Time',
+                            data: [],
+                            backgroundColor: 'rgba(138, 111, 247, 0.8)',
+                            borderColor: 'rgb(138, 111, 247)',
+                            borderWidth: 1,
+                            borderRadius: 5
+                        },
+                        {
+                            label: 'Sleep Time',
+                            data: [],
+                            backgroundColor: 'rgba(165, 148, 249, 0.8)',
+                            borderColor: 'rgb(165, 148, 249)',
+                            borderWidth: 1,
+                            borderRadius: 5
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            stacked: true,
+                            title: {
+                                display: true,
+                                text: 'Duration (hours)',
+                                color: '#4A3B8C',
+                                font: {
+                                    weight: 'bold'
+                                }
+                            },
+                            max: 24,
+                            grid: {
+                                color: 'rgba(138, 111, 247, 0.1)'
+                            },
+                            ticks: {
+                                color: '#4A3B8C'
+                            }
+                        },
+                        x: {
+                            stacked: true,
+                            title: {
+                                display: true,
+                                text: 'Date',
+                                color: '#4A3B8C',
+                                font: {
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(138, 111, 247, 0.1)'
+                            },
+                            ticks: {
+                                color: '#4A3B8C'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#4A3B8C',
+                                font: {
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Daily Time Distribution',
+                            color: '#4A3B8C',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(138, 111, 247, 0.9)',
+                            titleColor: 'white',
+                            bodyColor: 'white',
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.dataset.label || '';
+                                    const value = context.parsed.y;
+                                    return `${label}: ${value.toFixed(1)} hours`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
 
-            // Update current session
-            updateCurrentSession(data);
+        // Calculate stats from events
+        function calculateStats(events, includeCurrentSession = false) {
+            const stats = {
+                totalDuration: 0,
+                workDuration: 0,
+                sleepDuration: 0,
+                otherOffTimeDuration: 0,
+                startupCount: 0,
+                sessionCount: 0
+            };
 
-            // Calculate and display summary stats
-            const stats = calculateSummaryStats(data.events);
-            displaySummaryStats(stats);
-
-            // Display individual time slots
-            const timeSlotsDiv = document.getElementById('timeSlots');
-            timeSlotsDiv.innerHTML = '';
-            
-            const events = data.events;
             let currentSession = null;
-            let sessionCount = 1;
-            
-            for (let i = 0; i < events.length; i++) {
-                const event = events[i];
+            const sortedEvents = [...events].sort((a, b) => 
+                new Date(a.timestamp) - new Date(b.timestamp)
+            );
+
+            for (let i = 0; i < sortedEvents.length; i++) {
+                const event = sortedEvents[i];
+                
+                if (event.type === 'startup') {
+                    stats.startupCount++;
+                }
                 
                 if (event.type === 'startup' || event.type === 'unlock') {
                     currentSession = {
-                        start: event.timestamp,
-                        startType: event.type,
-                        startIndex: i
+                        start: new Date(event.timestamp)
                     };
                 } else if ((event.type === 'lock' || event.type === 'system_shutdown' || event.type === 'logout') && currentSession) {
-                    const duration = calculateTimeSlotDuration(currentSession.start, event.timestamp);
-                    const timeSlot = document.createElement('div');
-                    timeSlot.className = 'time-slot';
-                    timeSlot.innerHTML = `
-                        <strong>Session ${sessionCount}:</strong><br>
-                        Start: ${formatDateTime(currentSession.start)} (${currentSession.startType})<br>
-                        End: ${formatDateTime(event.timestamp)} (${event.type})<br>
-                        Duration: ${formatTime(duration)}
-                    `;
-                    timeSlotsDiv.appendChild(timeSlot);
+                    const duration = (new Date(event.timestamp) - currentSession.start) / 1000;
+                    stats.workDuration += duration;
+                    stats.sessionCount++;
                     currentSession = null;
-                    sessionCount++;
                 }
             }
 
-            // Display all events in chronological order
-            const eventsList = document.createElement('div');
-            eventsList.className = 'mt-4';
-            eventsList.innerHTML = '<h6>All Events</h6>';
+            // Calculate total duration between first and last event
+            if (sortedEvents.length >= 2) {
+                const firstEvent = new Date(sortedEvents[0].timestamp);
+                const lastEvent = new Date(sortedEvents[sortedEvents.length - 1].timestamp);
+                stats.totalDuration = (lastEvent - firstEvent) / 1000;
+            }
+
+            // Add current session duration if requested and exists
+            if (includeCurrentSession && currentSessionStart) {
+                const now = new Date();
+                const sessionStartDate = new Date(currentSessionStart);
+                
+                // Only include if the session started today
+                if (sessionStartDate.toDateString() === now.toDateString()) {
+                    const currentSessionDuration = (now - sessionStartDate) / 1000;
+                    stats.workDuration += currentSessionDuration;
+                    stats.totalDuration += currentSessionDuration;
+                    stats.sessionCount++; // Count current session
+                }
+            }
+
+            // Calculate sleep time (time between first and last event, excluding work time)
+            stats.sleepDuration = Math.max(0, stats.totalDuration - stats.workDuration);
+
+            return stats;
+        }
+
+        // Update stats display
+        function updateStatsDisplay(stats) {
+            document.getElementById('totalDuration').textContent = formatTime(stats.totalDuration);
+            document.getElementById('workDuration').textContent = formatTime(stats.workDuration);
+            document.getElementById('offTimeDuration').textContent = formatTime(stats.sleepDuration);
+            document.getElementById('startupCount').textContent = stats.startupCount;
+            document.getElementById('sessionCount').textContent = stats.sessionCount;
             
-            events.forEach(event => {
-                const eventDiv = document.createElement('div');
-                eventDiv.className = 'mb-2';
-                eventDiv.innerHTML = `
-                    <span class="badge event-badge ${event.type}">${event.type}</span>
-                    ${formatDateTime(event.timestamp)}
-                `;
-                eventsList.appendChild(eventDiv);
+            // Update header stats
+            document.getElementById('headerTotalDuration').textContent = formatTime(stats.totalDuration);
+
+        }
+
+        // Update chart data
+        function updateChartData(data) {
+            const dates = [];
+            const workDurations = [];
+            const sleepDurations = [];
+
+            // Group events by date
+            const eventsByDate = {};
+            data.events.forEach(event => {
+                const date = new Date(event.timestamp).toISOString().split('T')[0];
+                if (!eventsByDate[date]) {
+                    eventsByDate[date] = [];
+                }
+                eventsByDate[date].push(event);
             });
+
+            // Get today's date
+            const today = new Date().toISOString().split('T')[0];
+
+            // Process each date in order
+            data.dates.forEach(date => {
+                const events = eventsByDate[date] || [];
+                // Only include current session for today's date
+                const stats = calculateStats(events, date === today);
+                
+                // Format date for display (e.g., "Mon, Jan 15")
+                const displayDate = new Date(date).toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                dates.push(displayDate);
+                
+                // Convert to hours
+                workDurations.push(stats.workDuration / 3600);
+                sleepDurations.push(stats.sleepDuration / 3600);
+            });
+
+            durationChart.data.labels = dates;
+            durationChart.data.datasets[0].data = workDurations;
+            durationChart.data.datasets[1].data = sleepDurations;
+            durationChart.update();
+        }
+
+        function formatTimeRange(startTime, endTime) {
+            const start = new Date(startTime);
+            const end = new Date(endTime);
+            return `${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        }
+
+        function processTimelineData(events) {
+            // Sort events by timestamp
+            const sortedEvents = [...events].sort((a, b) => 
+                new Date(a.timestamp) - new Date(b.timestamp)
+            );
+
+            // Group events by date
+            const eventsByDate = {};
+            sortedEvents.forEach(event => {
+                const date = event.timestamp.split('T')[0];
+                if (!eventsByDate[date]) {
+                    eventsByDate[date] = [];
+                }
+                eventsByDate[date].push(event);
+            });
+
+            return eventsByDate;
+        }
+
+        function createTimelineSegment(startTime, endTime, type, date) {
+            const start = new Date(startTime);
+            const end = new Date(endTime);
+            const dayStart = new Date(date);
+            dayStart.setHours(7, 0, 0, 0);
+            const dayEnd = new Date(date);
+            dayEnd.setHours(23, 0, 0, 0);
             
-            timeSlotsDiv.appendChild(eventsList);
+            // Ensure times are within the visible range
+            const visibleStart = new Date(Math.max(start, dayStart));
+            const visibleEnd = new Date(Math.min(end, dayEnd));
+            
+            // Calculate position and width
+            const totalMinutes = 16 * 60; // 16 hours in minutes
+            const startMinutes = (visibleStart.getHours() - 7) * 60 + visibleStart.getMinutes();
+            const endMinutes = (visibleEnd.getHours() - 7) * 60 + visibleEnd.getMinutes();
+            
+            const startPercent = (startMinutes / totalMinutes) * 100;
+            const widthPercent = ((endMinutes - startMinutes) / totalMinutes) * 100;
+            
+            // Format duration for tooltip
+            const durationMs = end - start;
+            const hours = Math.floor(durationMs / (1000 * 60 * 60));
+            const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+            const timeRange = `${start.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})} - ${end.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}`;
+            
+            if (widthPercent > 0) {
+                return `
+                    <div class="timeline-segment ${type}" 
+                         style="left: ${startPercent}%; width: ${widthPercent}%;"
+                         data-tooltip="${timeRange} (${hours}h ${minutes}m)">
+                    </div>
+                `;
+            }
+            return '';
+        }
+
+        function updateTimeline(events) {
+            const timelineContent = document.getElementById('timelineContent');
+            timelineContent.innerHTML = '';
+
+            const eventsByDate = processTimelineData(events);
+            const dates = Object.keys(eventsByDate).sort((a, b) => b.localeCompare(a));
+
+            // Add current session to today's events if active
+            const today = new Date().toISOString().split('T')[0];
+            if (currentSessionStart && dates.includes(today)) {
+                const now = new Date();
+                eventsByDate[today].push({
+                    timestamp: now.toISOString(),
+                    type: 'current'
+                });
+            }
+
+            // Create timeline structure
+            let timelineHTML = `
+                <div class="timeline-grid">
+                    <div class="timeline-dates">
+                        <div class="timeline-date">Date</div>
+                        ${dates.map(date => `
+                            <div class="timeline-date">${formatEventDate(date)}</div>
+                        `).join('')}
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-hours">
+                            ${Array.from({length: 17}, (_, i) => `
+                                <div class="timeline-hour">${String(i + 7).padStart(2, '0')}:00</div>
+                            `).join('')}
+                        </div>
+                        <div class="timeline-lines">
+            `;
+
+            // Process each date
+            dates.forEach(date => {
+                const dateEvents = eventsByDate[date];
+            let currentSession = null;
+
+                timelineHTML += `
+                    <div class="timeline-date-group">
+                        <div class="timeline-line">
+                            <div class="timeline-line-label">Work</div>
+                `;
+
+                // Add work segments
+                for (let i = 0; i < dateEvents.length; i++) {
+                    const event = dateEvents[i];
+                    const eventTime = new Date(event.timestamp);
+                
+                if (event.type === 'startup' || event.type === 'unlock') {
+                        if (!currentSession) {
+                    currentSession = {
+                                start: eventTime,
+                                type: 'work'
+                            };
+                        }
+                    } else if (event.type === 'current' && currentSession) {
+                        // Add current session segment with different style
+                        timelineHTML += createTimelineSegment(
+                            currentSession.start,
+                            eventTime,
+                            'work current',
+                            date
+                        );
+                        currentSession = null;
+                } else if ((event.type === 'lock' || event.type === 'system_shutdown' || event.type === 'logout') && currentSession) {
+                        timelineHTML += createTimelineSegment(
+                            currentSession.start,
+                            eventTime,
+                            'work',
+                            date
+                        );
+                        currentSession = null;
+                    }
+                }
+
+                timelineHTML += `
+                        </div>
+                        <div class="timeline-line">
+                            <div class="timeline-line-label">Break</div>
+                `;
+
+                // Add break segments
+                    currentSession = null;
+                for (let i = 0; i < dateEvents.length; i++) {
+                    const event = dateEvents[i];
+                    const nextEvent = dateEvents[i + 1];
+                    
+                    if ((event.type === 'lock' || event.type === 'system_shutdown' || event.type === 'logout') && nextEvent) {
+                        timelineHTML += createTimelineSegment(
+                            event.timestamp,
+                            nextEvent.timestamp,
+                            'off',
+                            date
+                        );
+                    }
+                }
+
+                timelineHTML += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            timelineHTML += `
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            timelineContent.innerHTML = timelineHTML;
+
+            // Add tooltips
+            document.querySelectorAll('.timeline-segment').forEach(segment => {
+                segment.addEventListener('mouseenter', (e) => {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'timeline-tooltip';
+                    tooltip.textContent = segment.dataset.tooltip;
+                    segment.appendChild(tooltip);
+                });
+
+                segment.addEventListener('mouseleave', (e) => {
+                    const tooltip = segment.querySelector('.timeline-tooltip');
+                    if (tooltip) {
+                        tooltip.remove();
+                    }
+                });
+            });
+        }
+
+        function getEventIcon(type) {
+            switch(type) {
+                case 'startup': return 'bi-power';
+                case 'shutdown': return 'bi-power-off';
+                case 'lock': return 'bi-lock';
+                case 'unlock': return 'bi-unlock';
+                case 'logout': return 'bi-box-arrow-right';
+                case 'system_shutdown': return 'bi-power-off';
+                default: return 'bi-circle';
+            }
+        }
+
+        function formatEventTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString([], { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        function formatEventDate(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleDateString('en-US', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function createEventDateCard(date, events) {
+            const formattedDate = formatEventDate(date);
+            const eventItems = events.map(event => {
+                const time = formatEventTime(event.timestamp);
+                const icon = getEventIcon(event.type);
+                
+                return `
+                    <div class="event-item">
+                        <div class="event-time">${time}</div>
+                        <div class="event-icon ${event.type}">
+                            <i class="bi ${icon}"></i>
+                        </div>
+                        <div class="event-type">
+                            <span>${event.type.replace('_', ' ')}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div class="event-date-card">
+                    <div class="event-date-header">
+                        <div class="event-date">${formattedDate}</div>
+                        <div class="event-count">${events.length} events</div>
+                    </div>
+                    <div class="event-list">
+                        ${eventItems}
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateEventsList(events) {
+            const eventsList = document.getElementById('eventsList');
+            eventsList.innerHTML = '';
+
+            // Group events by date
+            const eventsByDate = {};
+            events.forEach(event => {
+                const date = event.timestamp.split('T')[0];
+                if (!eventsByDate[date]) {
+                    eventsByDate[date] = [];
+                }
+                eventsByDate[date].push(event);
+            });
+
+            // Sort dates in descending order (newest first)
+            const sortedDates = Object.keys(eventsByDate).sort((a, b) => b.localeCompare(a));
+
+            // Create cards for each date
+            sortedDates.forEach(date => {
+                const dateEvents = eventsByDate[date].sort((a, b) => 
+                    new Date(b.timestamp) - new Date(a.timestamp)
+                );
+                eventsList.innerHTML += createEventDateCard(date, dateEvents);
+            });
+        }
+
+        // Modified displayData function
+        function displayData(data) {
+            // Calculate and display stats for the most recent day
+            const lastDate = data.dates[data.dates.length - 1];
+            const lastDayEvents = data.events.filter(event => 
+                event.timestamp.startsWith(lastDate)
+            );
+
+            // Find the most recent unlock event without a corresponding lock event
+            const sortedEvents = [...data.events].sort((a, b) => 
+                new Date(b.timestamp) - new Date(a.timestamp)
+            );
+            
+            let foundCurrentSession = null;
+            for (const event of sortedEvents) {
+                if (event.type === 'lock' || event.type === 'system_shutdown' || event.type === 'logout') {
+                    break;
+                }
+                if (event.type === 'startup' || event.type === 'unlock') {
+                    foundCurrentSession = {
+                        start_time: event.timestamp,
+                        is_active: true
+                    };
+                    break;
+                }
+            }
+
+            // Update current session first
+            if (foundCurrentSession) {
+                updateCurrentSession({ current_session: foundCurrentSession });
+            }
+
+            // Then calculate stats (which will include current session)
+            const stats = calculateStats(lastDayEvents, true);
+            updateStatsDisplay(stats);
+
+            // Update chart with all days
+            updateChartData(data);
+
+            // Update timeline
+            updateTimeline(data.events);
+
+            // Update events list
+            updateEventsList(data.events);
         }
 
         async function loadData(date) {
             try {
-                const response = await fetch(`/data/screen_time_data/screen_time_${date}.json`, {
+                // Get the number of days from the input
+                const daysToShow = parseInt(document.getElementById('daysInput').value) || 7;
+                
+                // Get the last N days including the selected date
+                const dates = [];
+                const selectedDate = new Date(date);
+                for (let i = daysToShow - 1; i >= 0; i--) {
+                    const d = new Date(selectedDate);
+                    d.setDate(d.getDate() - i);
+                    dates.push(d.toISOString().split('T')[0]);
+                }
+
+                // Load data for all dates
+                const allData = await Promise.all(
+                    dates.map(async (d) => {
+                        try {
+                            const response = await fetch(`/data/screen_time_data/screen_time_${d}.json`, {
                     headers: {
                         'Accept': 'application/json'
                     }
                 });
                 if (!response.ok) {
-                    throw new Error('No data available for this date');
+                                return { date: d, events: [] };
                 }
                 const data = await response.json();
-                displayData(data);
+                            return { date: d, ...data };
+                        } catch (error) {
+                            console.error(`Error loading data for ${d}:`, error);
+                            return { date: d, events: [] };
+                        }
+                    })
+                );
+
+                // Combine all events
+                const combinedData = {
+                    events: allData.flatMap(data => data.events),
+                    dates: dates
+                };
+
+                displayData(combinedData);
             } catch (error) {
                 console.error('Error loading data:', error);
-                document.getElementById('timeSlots').innerHTML = '<p class="text-danger">No data available for this date</p>';
+                document.getElementById('timeSlots').innerHTML = '<p class="text-danger">No data available</p>';
             }
         }
+
+        // Initialize chart when document is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeChart();
 
         // Set up date picker
         const datePicker = document.getElementById('datePicker');
         datePicker.valueAsDate = new Date();
+            
+            // Set up days input
+            const daysInput = document.getElementById('daysInput');
+            daysInput.addEventListener('change', () => {
+                loadData(datePicker.value);
+            });
         
         // Load today's data by default
         loadData(new Date().toISOString().split('T')[0]);
 
-        // Update working hours display every second
-        setInterval(updateWorkingHoursDisplay, 1000);
+            // Set up view options
+            const viewOptions = document.querySelectorAll('.dropdown-item');
+            viewOptions.forEach(option => {
+                option.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const view = e.target.dataset.view;
+                    // Update view button text
+                    document.getElementById('viewOptions').innerHTML = 
+                        `<i class="bi bi-eye me-1"></i>${e.target.textContent}`;
+                    
+                    // Handle view changes
+                    if (view === 'day') {
+                        daysInput.value = 1;
+                        loadData(datePicker.value);
+                    } else if (view === 'week') {
+                        daysInput.value = 7;
+                        loadData(datePicker.value);
+                    } else if (view === 'month') {
+                        daysInput.value = 30;
+                        loadData(datePicker.value);
+                    }
+                });
+            });
 
         // Load data when date is changed
         datePicker.addEventListener('change', (e) => {
             loadData(e.target.value);
         });
-
-        // Update current session time display
-        setInterval(updateCurrentSessionDisplay, 1000);
 
         // Update data every 30 seconds
         setInterval(() => {
@@ -431,6 +1691,7 @@
                 loadData(currentDate);
             }
         }, 30000);
+        });
 
         // Clean up interval when page is closed
         window.addEventListener('beforeunload', () => {
