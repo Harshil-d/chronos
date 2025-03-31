@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screen Time Viewer</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/components/navbar.css">
+    <link rel="stylesheet" href="assets/css/components/dashboard.css">
+    <link rel="stylesheet" href="assets/css/components/timeline.css">
+    <link rel="stylesheet" href="assets/css/components/events.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <img src="assets/images/logo.png" alt="Screen Time Viewer" class="navbar-logo">
+            <h1>Screen Time Viewer</h1>
+        </div>
+        <div class="navbar-controls">
+            <div class="date-picker-container">
+                <input type="date" id="datePicker" class="date-picker">
+            </div>
+            <div class="current-session">
+                <span class="current-session-label">Current Session:</span>
+                <span class="current-session-time">00:00:00</span>
+            </div>
+        </div>
+        <div class="navbar-stats">
+            <div class="stat-item">
+                <span class="stat-label">Total Time:</span>
+                <span class="stat-value" id="totalTime">00:00:00</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Work Time:</span>
+                <span class="stat-value" id="workTime">00:00:00</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Off Time:</span>
+                <span class="stat-value" id="offTime">00:00:00</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard -->
+        <section class="dashboard">
+            <div class="dashboard-header">
+                <h2>Analytics</h2>
+                <div class="dashboard-controls">
+                    <label for="daysInput">Show last</label>
+                    <select id="daysInput" class="days-input">
+                        <option value="7">7 days</option>
+                        <option value="14">14 days</option>
+                        <option value="30">30 days</option>
+                    </select>
+                </div>
+            </div>
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-card-icon">⏱️</div>
+                    <div class="stat-card-content">
+                        <div class="stat-card-label">Total Duration</div>
+                        <div class="stat-card-value" id="totalDuration">00:00:00</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon">💼</div>
+                    <div class="stat-card-content">
+                        <div class="stat-card-label">Work Duration</div>
+                        <div class="stat-card-value" id="workDuration">00:00:00</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon">☕</div>
+                    <div class="stat-card-content">
+                        <div class="stat-card-label">Off Time Duration</div>
+                        <div class="stat-card-value" id="offTimeDuration">00:00:00</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon">🚀</div>
+                    <div class="stat-card-content">
+                        <div class="stat-card-label">Startup Count</div>
+                        <div class="stat-card-value" id="startupCount">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon">🔄</div>
+                    <div class="stat-card-content">
+                        <div class="stat-card-label">Session Count</div>
+                        <div class="stat-card-value" id="sessionCount">0</div>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-chart">
+                <canvas id="analyticsChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Timeline -->
+        <section class="timeline">
+            <h2>Timeline</h2>
+            <div class="timeline-container">
+                <div id="timelineContent"></div>
+            </div>
+        </section>
+
+        <!-- Events -->
+        <section class="events">
+            <h2>Events</h2>
+            <div class="events-container">
+                <div id="eventsList"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Screen Time Viewer. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script type="module" src="assets/js/app.js"></script>
+</body>
+</html> 

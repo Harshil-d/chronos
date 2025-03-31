@@ -1,0 +1,128 @@
+.navbar {
+    background-color: var(--primary-color) !important;
+    box-shadow: 0 2px 4px rgba(138, 111, 247, 0.3);
+    padding: 0.5rem 1rem;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: white !important;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: all 0.2s;
+}
+
+.nav-link:hover {
+    background-color: var(--primary-light);
+    color: white !important;
+}
+
+.nav-link.active {
+    background-color: var(--primary-light);
+    color: white !important;
+}
+
+.header-stats {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: auto;
+    color: white;
+}
+
+.header-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 1.2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    transition: all 0.2s;
+    min-width: 200px;
+    backdrop-filter: blur(5px);
+}
+
+.header-stat-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.header-stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.header-stat-value {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: white;
+    font-family: 'SF Mono', 'Consolas', monospace;
+    margin-left: auto;
+}
+
+.header-stat-icon {
+    font-size: 1.3rem;
+    color: white;
+    opacity: 0.9;
+}
+
+.header-date-picker {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: 2rem;
+}
+
+.header-date-picker .input-group {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+    backdrop-filter: blur(5px);
+    min-width: 200px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.header-date-picker .input-group-text {
+    background: transparent !important;
+    border: none;
+    color: white;
+    padding: 0.8rem 1rem;
+    font-size: 1.3rem;
+    opacity: 0.9;
+}
+
+.header-date-picker .form-control {
+    background: transparent;
+    border: none;
+    color: white;
+    padding: 0.8rem 1rem;
+    font-weight: 500;
+    height: 100%;
+}
+
+.header-date-picker .form-control:focus {
+    background: transparent;
+    box-shadow: none;
+}
+
+.header-date-picker .form-control::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.7;
+} 

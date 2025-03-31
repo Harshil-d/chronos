@@ -1,195 +1,138 @@
-# Chronos
+# Screen Time Tracker
 
-A modern, intelligent screen time tracker for Linux that helps you monitor and understand your computer usage patterns.
-
-![Chronos Logo](static/icons/icon-192x192.png)
-
-## About
-
-Chronos is a lightweight yet powerful screen time tracking tool that runs seamlessly in the background on Linux systems. It provides detailed insights into your computer usage patterns through an elegant web interface and supports offline access through PWA capabilities.
-
-## Project Structure
-
-```
-chronos/
-├── src/                    # Source code
-│   ├── tracker/           # Screen time tracking functionality
-│   │   └── screen_time_tracker.py
-│   └── server/           # HTTP server for the viewer
-│       └── serve_viewer.py
-├── static/                # Static assets
-│   ├── css/              # Stylesheets
-│   │   └── styles.css
-│   ├── js/               # JavaScript files
-│   │   └── viewer.js
-│   └── icons/            # PWA icons
-│       ├── icon-192x192.png
-│       └── icon-512x512.png
-├── data/                  # Data storage
-│   └── screen_time_data/ # JSON data files
-├── logs/                  # Log files
-├── docs/                  # Documentation
-│   └── README.md
-├── chronos.service       # Systemd service file
-├── install_service.sh    # Service installation script
-├── requirements.txt      # Python dependencies
-├── setup.sh             # Setup script
-├── start_all.sh         # Start script
-├── manifest.json        # PWA manifest
-└── screen_time_viewer.html # Main HTML viewer
-```
+A modern web application for tracking and analyzing screen time data. This application provides real-time analytics, interactive timeline visualization, and detailed event tracking for monitoring computer usage.
 
 ## Features
 
-- 🔒 Secure screen lock/unlock event tracking
-- 🚀 System startup and shutdown monitoring
-- 👤 User session tracking
-- ⏱️ Real-time screen time calculation
-- 📊 Interactive analytics dashboard
-- 🌐 PWA support for offline access
-- 📅 Date-based data filtering
-- 📈 Detailed event timeline
-- 🔄 Automatic background synchronization
+- Real-time screen time tracking
+- Interactive timeline visualization
+- Detailed event logging
+- Daily and weekly analytics
+- Offline support
+- Modern, responsive web interface
 
 ## Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/chronos.git
-cd chronos
+git clone https://github.com/yourusername/screen-time-tracker.git
+cd screen-time-tracker
 ```
 
-2. Run the setup script:
+2. Create a virtual environment and activate it:
 ```bash
-./setup.sh
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-This will:
-- Create necessary directories
-- Set up a Python virtual environment
-- Install required packages
-- Configure permissions
-
-3. Install the systemd service:
+3. Install the package:
 ```bash
-./install_service.sh
+pip install -e .
 ```
-
-This will:
-- Install Chronos as a user systemd service
-- Enable autostart on login
-- Start the service immediately
 
 ## Usage
 
-### Service Management
-
-Control Chronos using systemd:
+1. Start the screen time tracker:
 ```bash
-# Check service status
-systemctl --user status chronos.service
-
-# Start the service
-systemctl --user start chronos.service
-
-# Stop the service
-systemctl --user stop chronos.service
-
-# Restart the service
-systemctl --user restart chronos.service
-
-# View logs
-journalctl --user -u chronos.service -f
+screen-time-tracker
 ```
 
-### Viewing Your Screen Time
-
-Open your browser and navigate to:
-```
-http://localhost:4567/
-```
-
-### Data Location
-
-- Screen time data: `data/screen_time_data/screen_time_YYYY-MM-DD.json`
-- Log files:
-  - Tracker logs: `logs/screen_time_tracker.log`
-  - Server logs: `logs/viewer_server.log`
-  - Startup logs: `logs/startup.log`
-
-### Checking Status
-
-To check if Chronos is running:
+2. Start the web server:
 ```bash
-systemctl --user status chronos.service
+screen-time-server
 ```
 
-### Viewing Logs
-
-To view all logs:
-```bash
-# View service logs
-journalctl --user -u chronos.service -f
-
-# View tracker logs
-tail -f logs/screen_time_tracker.log
-
-# View server logs
-tail -f logs/viewer_server.log
-
-# View startup logs
-tail -f logs/startup.log
+3. Open your web browser and navigate to:
+```
+http://localhost:5000
 ```
 
-## Troubleshooting
+## Project Structure
 
-1. If the service isn't starting:
-   - Check the service status: `systemctl --user status chronos.service`
-   - View the logs: `journalctl --user -u chronos.service -f`
-   - Ensure proper permissions: `chmod +x start_all.sh src/tracker/screen_time_tracker.py src/server/serve_viewer.py`
+```
+src/
+├── tracker/
+│   ├── core/
+│   │   └── screen_time_tracker.py
+│   ├── events/
+│   │   ├── event_types.py
+│   │   └── event_handler.py
+│   └── utils/
+│       ├── config.py
+│       └── logger.py
+├── server/
+│   └── app.py
+└── assets/
+    ├── css/
+    ├── js/
+    └── images/
+```
 
-2. If the viewer isn't accessible:
-   - Check if the server is running: `systemctl --user status chronos.service`
-   - Look at server logs: `tail -f logs/viewer_server.log`
-   - Ensure port 4567 is not in use: `lsof -i :4567`
+## Components
 
-3. If data isn't updating:
-   - Check file permissions in `data/screen_time_data/`
-   - Verify the service is running: `systemctl --user status chronos.service`
-   - Check for errors in the logs: `journalctl --user -u chronos.service -f`
+### Screen Time Tracker
+The core module that tracks system events and records screen time data.
 
-## Data Structure
+### Event Handler
+Handles system events such as startup, shutdown, login, logout, and screen lock/unlock.
 
-The screen time data is stored in JSON format with the following structure:
+### Web Server
+Serves the web interface and provides API endpoints for data access.
+
+### Web Interface
+A modern, responsive web application built with vanilla JavaScript and Chart.js.
+
+## Configuration
+
+The application can be configured by creating a `config.json` file in the project root:
+
+```json
+{
+    "data_dir": "~/.screen_time",
+    "log_dir": "~/.screen_time/logs",
+    "idle_threshold": 300,
+    "debug": false,
+    "server": {
+        "host": "localhost",
+        "port": 5000
+    }
+}
+```
+
+## Data Format
+
+Screen time data is stored in JSON files with the following format:
 
 ```json
 {
     "events": [
         {
-            "timestamp": "2024-XX-XX HH:MM:SS",
-            "type": "startup|shutdown|lock|unlock|logout"
+            "type": "STARTUP",
+            "timestamp": "2024-02-20T08:00:00"
+        },
+        {
+            "type": "LOCK",
+            "timestamp": "2024-02-20T12:00:00"
         }
     ],
-    "total_time": 0,
-    "current_session": {
-        "start_time": "2024-XX-XX HH:MM:SS",
-        "is_active": true|false
-    }
+    "total_time": 14400
 }
 ```
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
 ## License
 
-[MIT License](LICENSE)
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Acknowledgments
 
-- Thanks to all contributors who have helped shape Chronos
-- Built with Python, modern web technologies, and ❤️
-
----
-Made with ⏱️ by Harshil Zadafiya
+- Chart.js for the beautiful charts
+- Flask for the web framework
+- All contributors who have helped with this project
