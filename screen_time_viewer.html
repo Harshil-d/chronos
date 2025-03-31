@@ -134,7 +134,7 @@
             <div class="col-md-4">
                 <div class="dashboard-card">
                     <h5 class="card-title">
-                        <i class="bi bi-clock-history me-2"></i>Today's Total Screen Time
+                        <i class="bi bi-clock-history me-2"></i>Today's Working Hours
                     </h5>
                     <div class="card-content">
                         <div id="totalTime" class="time-display total-time">00:00:00</div>
@@ -295,9 +295,40 @@
             `;
         }
 
+        function calculateWorkingHours() {
+            const now = new Date();
+            const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            
+            // Set working hours (9 AM to 6 PM)
+            const workStart = new Date(startOfDay);
+            workStart.setHours(9, 0, 0, 0);
+            
+            const workEnd = new Date(startOfDay);
+            workEnd.setHours(18, 0, 0, 0);
+            
+            // If current time is before work start, show 0
+            if (now < workStart) {
+                return 0;
+            }
+            
+            // If current time is after work end, show full working hours (9 hours)
+            if (now > workEnd) {
+                return 9 * 3600; // 9 hours in seconds
+            }
+            
+            // Calculate duration from work start to current time
+            const duration = (now - workStart) / 1000; // Convert to seconds
+            return duration;
+        }
+
+        function updateWorkingHoursDisplay() {
+            const duration = calculateWorkingHours();
+            document.getElementById('totalTime').textContent = formatTime(duration);
+        }
+
         function displayData(data) {
-            // Display total time
-            document.getElementById('totalTime').textContent = formatTime(data.total_time);
+            // Update working hours display
+            updateWorkingHoursDisplay();
 
             // Update current session
             updateCurrentSession(data);
@@ -381,6 +412,9 @@
         
         // Load today's data by default
         loadData(new Date().toISOString().split('T')[0]);
+
+        // Update working hours display every second
+        setInterval(updateWorkingHoursDisplay, 1000);
 
         // Load data when date is changed
         datePicker.addEventListener('change', (e) => {
